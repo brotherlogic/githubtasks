@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package githubtasks;
+
+message Project {
+  string name = 1;
+  repeated Milestone milestones = 2;
+    string github_project = 3;
+}
+
+message Milestone {
+  string name = 1;
+  int32 number = 2;
+
+  enum MilestoneState {
+    CREATED = 0;
+    IDLE = 1;
+    ACTIVE = 2;
+    COMPLETE = 3;
+  }
+  MilestoneState state = 3;
+}
+
+message AddProjectRequest {
+  Project add = 1;
+}
+
+message AddProjectResponse {
+}
+
+message UpdateProjectRequest {
+  string name = 1;
+  Milestone milestone = 2;
+}
+
+message UpdateProjectResponse {
+  Project updated = 1;
+}
+
+service TasksService {
+  rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
+}
