@@ -19,6 +19,20 @@ message Milestone {
     COMPLETE = 3;
   }
   MilestoneState state = 3;
+  repeated Task tasks = 4;
+}
+
+message Task {
+  string title = 1;
+  string body = 2;
+
+  enum TaskState {
+    IDLE = 0;
+    ACTIVE = 1;
+    COMPLETE = 2;
+  }
+  TaskState state = 4;
+  int32 number = 5;
 }
 
 message AddProjectRequest {
@@ -37,7 +51,19 @@ message UpdateProjectResponse {
   Project updated = 1;
 }
 
+message AddTaskRequest {
+  string milestone_name = 1;
+  int32 milestone_number = 2;
+  string title = 3;
+  string body = 4;
+}
+
+message AddTaskResponse {
+  Task task = 1;
+}
+
 service TasksService {
   rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
+  rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
 }

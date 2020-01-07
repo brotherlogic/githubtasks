@@ -53,6 +53,34 @@ func (Milestone_MilestoneState) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_0d888ecb083325cf, []int{1, 0}
 }
 
+type Task_TaskState int32
+
+const (
+	Task_IDLE     Task_TaskState = 0
+	Task_ACTIVE   Task_TaskState = 1
+	Task_COMPLETE Task_TaskState = 2
+)
+
+var Task_TaskState_name = map[int32]string{
+	0: "IDLE",
+	1: "ACTIVE",
+	2: "COMPLETE",
+}
+
+var Task_TaskState_value = map[string]int32{
+	"IDLE":     0,
+	"ACTIVE":   1,
+	"COMPLETE": 2,
+}
+
+func (x Task_TaskState) String() string {
+	return proto.EnumName(Task_TaskState_name, int32(x))
+}
+
+func (Task_TaskState) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_0d888ecb083325cf, []int{2, 0}
+}
+
 type Project struct {
 	Name                 string       `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Milestones           []*Milestone `protobuf:"bytes,2,rep,name=milestones,proto3" json:"milestones,omitempty"`
@@ -112,6 +140,7 @@ type Milestone struct {
 	Name                 string                   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Number               int32                    `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
 	State                Milestone_MilestoneState `protobuf:"varint,3,opt,name=state,proto3,enum=githubtasks.Milestone_MilestoneState" json:"state,omitempty"`
+	Tasks                []*Task                  `protobuf:"bytes,4,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
 	XXX_unrecognized     []byte                   `json:"-"`
 	XXX_sizecache        int32                    `json:"-"`
@@ -163,6 +192,76 @@ func (m *Milestone) GetState() Milestone_MilestoneState {
 	return Milestone_CREATED
 }
 
+func (m *Milestone) GetTasks() []*Task {
+	if m != nil {
+		return m.Tasks
+	}
+	return nil
+}
+
+type Task struct {
+	Title                string         `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Body                 string         `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	State                Task_TaskState `protobuf:"varint,4,opt,name=state,proto3,enum=githubtasks.Task_TaskState" json:"state,omitempty"`
+	Number               int32          `protobuf:"varint,5,opt,name=number,proto3" json:"number,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *Task) Reset()         { *m = Task{} }
+func (m *Task) String() string { return proto.CompactTextString(m) }
+func (*Task) ProtoMessage()    {}
+func (*Task) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0d888ecb083325cf, []int{2}
+}
+
+func (m *Task) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Task.Unmarshal(m, b)
+}
+func (m *Task) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Task.Marshal(b, m, deterministic)
+}
+func (m *Task) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Task.Merge(m, src)
+}
+func (m *Task) XXX_Size() int {
+	return xxx_messageInfo_Task.Size(m)
+}
+func (m *Task) XXX_DiscardUnknown() {
+	xxx_messageInfo_Task.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Task proto.InternalMessageInfo
+
+func (m *Task) GetTitle() string {
+	if m != nil {
+		return m.Title
+	}
+	return ""
+}
+
+func (m *Task) GetBody() string {
+	if m != nil {
+		return m.Body
+	}
+	return ""
+}
+
+func (m *Task) GetState() Task_TaskState {
+	if m != nil {
+		return m.State
+	}
+	return Task_IDLE
+}
+
+func (m *Task) GetNumber() int32 {
+	if m != nil {
+		return m.Number
+	}
+	return 0
+}
+
 type AddProjectRequest struct {
 	Add                  *Project `protobuf:"bytes,1,opt,name=add,proto3" json:"add,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -174,7 +273,7 @@ func (m *AddProjectRequest) Reset()         { *m = AddProjectRequest{} }
 func (m *AddProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*AddProjectRequest) ProtoMessage()    {}
 func (*AddProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0d888ecb083325cf, []int{2}
+	return fileDescriptor_0d888ecb083325cf, []int{3}
 }
 
 func (m *AddProjectRequest) XXX_Unmarshal(b []byte) error {
@@ -212,7 +311,7 @@ func (m *AddProjectResponse) Reset()         { *m = AddProjectResponse{} }
 func (m *AddProjectResponse) String() string { return proto.CompactTextString(m) }
 func (*AddProjectResponse) ProtoMessage()    {}
 func (*AddProjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0d888ecb083325cf, []int{3}
+	return fileDescriptor_0d888ecb083325cf, []int{4}
 }
 
 func (m *AddProjectResponse) XXX_Unmarshal(b []byte) error {
@@ -245,7 +344,7 @@ func (m *UpdateProjectRequest) Reset()         { *m = UpdateProjectRequest{} }
 func (m *UpdateProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*UpdateProjectRequest) ProtoMessage()    {}
 func (*UpdateProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0d888ecb083325cf, []int{4}
+	return fileDescriptor_0d888ecb083325cf, []int{5}
 }
 
 func (m *UpdateProjectRequest) XXX_Unmarshal(b []byte) error {
@@ -291,7 +390,7 @@ func (m *UpdateProjectResponse) Reset()         { *m = UpdateProjectResponse{} }
 func (m *UpdateProjectResponse) String() string { return proto.CompactTextString(m) }
 func (*UpdateProjectResponse) ProtoMessage()    {}
 func (*UpdateProjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0d888ecb083325cf, []int{5}
+	return fileDescriptor_0d888ecb083325cf, []int{6}
 }
 
 func (m *UpdateProjectResponse) XXX_Unmarshal(b []byte) error {
@@ -319,44 +418,160 @@ func (m *UpdateProjectResponse) GetUpdated() *Project {
 	return nil
 }
 
+type AddTaskRequest struct {
+	MilestoneName        string   `protobuf:"bytes,1,opt,name=milestone_name,json=milestoneName,proto3" json:"milestone_name,omitempty"`
+	MilestoneNumber      int32    `protobuf:"varint,2,opt,name=milestone_number,json=milestoneNumber,proto3" json:"milestone_number,omitempty"`
+	Title                string   `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Body                 string   `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddTaskRequest) Reset()         { *m = AddTaskRequest{} }
+func (m *AddTaskRequest) String() string { return proto.CompactTextString(m) }
+func (*AddTaskRequest) ProtoMessage()    {}
+func (*AddTaskRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0d888ecb083325cf, []int{7}
+}
+
+func (m *AddTaskRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddTaskRequest.Unmarshal(m, b)
+}
+func (m *AddTaskRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddTaskRequest.Marshal(b, m, deterministic)
+}
+func (m *AddTaskRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddTaskRequest.Merge(m, src)
+}
+func (m *AddTaskRequest) XXX_Size() int {
+	return xxx_messageInfo_AddTaskRequest.Size(m)
+}
+func (m *AddTaskRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddTaskRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddTaskRequest proto.InternalMessageInfo
+
+func (m *AddTaskRequest) GetMilestoneName() string {
+	if m != nil {
+		return m.MilestoneName
+	}
+	return ""
+}
+
+func (m *AddTaskRequest) GetMilestoneNumber() int32 {
+	if m != nil {
+		return m.MilestoneNumber
+	}
+	return 0
+}
+
+func (m *AddTaskRequest) GetTitle() string {
+	if m != nil {
+		return m.Title
+	}
+	return ""
+}
+
+func (m *AddTaskRequest) GetBody() string {
+	if m != nil {
+		return m.Body
+	}
+	return ""
+}
+
+type AddTaskResponse struct {
+	Task                 *Task    `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddTaskResponse) Reset()         { *m = AddTaskResponse{} }
+func (m *AddTaskResponse) String() string { return proto.CompactTextString(m) }
+func (*AddTaskResponse) ProtoMessage()    {}
+func (*AddTaskResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0d888ecb083325cf, []int{8}
+}
+
+func (m *AddTaskResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddTaskResponse.Unmarshal(m, b)
+}
+func (m *AddTaskResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddTaskResponse.Marshal(b, m, deterministic)
+}
+func (m *AddTaskResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddTaskResponse.Merge(m, src)
+}
+func (m *AddTaskResponse) XXX_Size() int {
+	return xxx_messageInfo_AddTaskResponse.Size(m)
+}
+func (m *AddTaskResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddTaskResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddTaskResponse proto.InternalMessageInfo
+
+func (m *AddTaskResponse) GetTask() *Task {
+	if m != nil {
+		return m.Task
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("githubtasks.Milestone_MilestoneState", Milestone_MilestoneState_name, Milestone_MilestoneState_value)
+	proto.RegisterEnum("githubtasks.Task_TaskState", Task_TaskState_name, Task_TaskState_value)
 	proto.RegisterType((*Project)(nil), "githubtasks.Project")
 	proto.RegisterType((*Milestone)(nil), "githubtasks.Milestone")
+	proto.RegisterType((*Task)(nil), "githubtasks.Task")
 	proto.RegisterType((*AddProjectRequest)(nil), "githubtasks.AddProjectRequest")
 	proto.RegisterType((*AddProjectResponse)(nil), "githubtasks.AddProjectResponse")
 	proto.RegisterType((*UpdateProjectRequest)(nil), "githubtasks.UpdateProjectRequest")
 	proto.RegisterType((*UpdateProjectResponse)(nil), "githubtasks.UpdateProjectResponse")
+	proto.RegisterType((*AddTaskRequest)(nil), "githubtasks.AddTaskRequest")
+	proto.RegisterType((*AddTaskResponse)(nil), "githubtasks.AddTaskResponse")
 }
 
 func init() { proto.RegisterFile("githubtasks.proto", fileDescriptor_0d888ecb083325cf) }
 
 var fileDescriptor_0d888ecb083325cf = []byte{
-	// 372 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x53, 0xcb, 0x6e, 0xda, 0x40,
-	0x14, 0xc5, 0x98, 0xe7, 0x35, 0x20, 0x73, 0x45, 0x91, 0xc5, 0xa2, 0xa5, 0x23, 0x51, 0xb1, 0x62,
-	0xe1, 0x56, 0xdd, 0xb0, 0xb2, 0xc0, 0xaa, 0x90, 0x40, 0x20, 0xe3, 0x56, 0xdd, 0x25, 0x06, 0x8f,
-	0x12, 0x92, 0x60, 0x3b, 0x9e, 0x71, 0x56, 0xf9, 0xaf, 0x28, 0x7f, 0x17, 0xe1, 0x07, 0xd8, 0xc4,
-	0xb0, 0x1b, 0xcf, 0x79, 0xdc, 0x73, 0x8f, 0x35, 0xd0, 0xbe, 0xdb, 0xf1, 0xfb, 0x60, 0xc3, 0x2d,
-	0xf6, 0xc8, 0x46, 0x9e, 0xef, 0x72, 0x17, 0xa5, 0xd4, 0x15, 0x79, 0x85, 0xea, 0xca, 0x77, 0x1f,
-	0xe8, 0x96, 0x23, 0x42, 0xc9, 0xb1, 0xf6, 0x54, 0x11, 0xfa, 0xc2, 0xb0, 0x6e, 0x84, 0x67, 0xfc,
-	0x0d, 0xb0, 0xdf, 0x3d, 0x51, 0xc6, 0x5d, 0x87, 0x32, 0xa5, 0xd8, 0x17, 0x87, 0x92, 0xda, 0x1d,
-	0xa5, 0x3d, 0x17, 0x09, 0x6c, 0xa4, 0x98, 0x38, 0x80, 0x56, 0x44, 0xba, 0xf1, 0x22, 0x77, 0x45,
-	0x0c, 0x5d, 0x9b, 0xd1, 0x6d, 0x3c, 0x92, 0xbc, 0x09, 0x50, 0x3f, 0x1a, 0xe4, 0x06, 0xe8, 0x42,
-	0xc5, 0x09, 0xf6, 0x1b, 0xea, 0x2b, 0xc5, 0xbe, 0x30, 0x2c, 0x1b, 0xf1, 0x17, 0x8e, 0xa1, 0xcc,
-	0xb8, 0xc5, 0x69, 0xe8, 0xdb, 0x52, 0x07, 0xf9, 0x99, 0x4e, 0xa7, 0xf5, 0x81, 0x6c, 0x44, 0x1a,
-	0xa2, 0x41, 0x2b, 0x0b, 0xa0, 0x04, 0xd5, 0x89, 0xa1, 0x6b, 0xa6, 0x3e, 0x95, 0x0b, 0x58, 0x83,
-	0xd2, 0x6c, 0x3a, 0xd7, 0x65, 0x01, 0x01, 0x2a, 0xda, 0xc4, 0x9c, 0xfd, 0xd3, 0xe5, 0x22, 0x36,
-	0xa0, 0x36, 0x59, 0x2e, 0x56, 0x73, 0xdd, 0xd4, 0x65, 0x91, 0x8c, 0xa1, 0xad, 0xd9, 0x76, 0xbc,
-	0x87, 0x41, 0x9f, 0x03, 0xca, 0x38, 0xfe, 0x00, 0xd1, 0xb2, 0xed, 0x30, 0xbf, 0xa4, 0x76, 0x32,
-	0x91, 0x12, 0xe6, 0x81, 0x40, 0x3a, 0x80, 0x69, 0x31, 0xf3, 0x5c, 0x87, 0x51, 0x72, 0x0b, 0x9d,
-	0xbf, 0x9e, 0x6d, 0x71, 0x7a, 0xe6, 0x9a, 0x57, 0xcb, 0x2f, 0xa8, 0x1f, 0xdb, 0x0e, 0x9b, 0xb9,
-	0xfc, 0x5b, 0x4e, 0x44, 0xf2, 0x07, 0xbe, 0x9c, 0x4d, 0x88, 0x46, 0xe3, 0x08, 0xaa, 0x41, 0x08,
-	0x5c, 0x0f, 0x9f, 0x90, 0xd4, 0x77, 0x01, 0x1a, 0xe6, 0x01, 0x5a, 0x53, 0xff, 0x65, 0xb7, 0xa5,
-	0xb8, 0x04, 0x38, 0x6d, 0x84, 0x5f, 0x33, 0xea, 0x4f, 0x3d, 0xf5, 0xbe, 0x5d, 0xc4, 0xe3, 0x2a,
-	0x0a, 0xf8, 0x1f, 0x9a, 0x99, 0xa8, 0xf8, 0x3d, 0xa3, 0xc9, 0x2b, 0xaa, 0x47, 0xae, 0x51, 0x12,
-	0xe7, 0x4d, 0x25, 0x7c, 0x05, 0x3f, 0x3f, 0x02, 0x00, 0x00, 0xff, 0xff, 0xc2, 0x66, 0x1f, 0x22,
-	0x1a, 0x03, 0x00, 0x00,
+	// 533 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x54, 0x5d, 0x6f, 0xd3, 0x30,
+	0x14, 0x6d, 0xbe, 0xda, 0xe5, 0x76, 0xcd, 0xd2, 0xab, 0x32, 0x45, 0x1d, 0x82, 0x62, 0xa9, 0x50,
+	0x5e, 0x8a, 0x28, 0x08, 0x21, 0xed, 0x29, 0xea, 0x02, 0x9a, 0xb4, 0xb1, 0x29, 0x2b, 0x88, 0xb7,
+	0x91, 0x2e, 0x16, 0x94, 0xad, 0x4d, 0xa9, 0x5d, 0x24, 0x24, 0x5e, 0x78, 0xe7, 0xa7, 0xf0, 0xa3,
+	0xf8, 0x29, 0x53, 0x9c, 0x2f, 0xa7, 0xcb, 0xfa, 0x12, 0xd9, 0xbe, 0xe7, 0x1e, 0x9f, 0xe3, 0x7b,
+	0x14, 0x68, 0x7f, 0x9d, 0xf1, 0x6f, 0xeb, 0x29, 0x0f, 0xd8, 0x35, 0x1b, 0x2e, 0x57, 0x11, 0x8f,
+	0xb0, 0x29, 0x1d, 0x91, 0xdf, 0xd0, 0x38, 0x5f, 0x45, 0xdf, 0xe9, 0x15, 0x47, 0x04, 0x7d, 0x11,
+	0xcc, 0xa9, 0xa3, 0xf4, 0x94, 0x81, 0xe9, 0x8b, 0x35, 0xbe, 0x01, 0x98, 0xcf, 0x6e, 0x28, 0xe3,
+	0xd1, 0x82, 0x32, 0x47, 0xed, 0x69, 0x83, 0xe6, 0x68, 0x7f, 0x28, 0x73, 0x9e, 0x66, 0x65, 0x5f,
+	0x42, 0x62, 0x1f, 0xac, 0x04, 0x74, 0xb9, 0x4c, 0xd8, 0x1d, 0x4d, 0xb0, 0xb6, 0x92, 0xd3, 0xf4,
+	0x4a, 0xf2, 0x5f, 0x01, 0x33, 0x27, 0xa8, 0x14, 0xb0, 0x0f, 0xf5, 0xc5, 0x7a, 0x3e, 0xa5, 0x2b,
+	0x47, 0xed, 0x29, 0x03, 0xc3, 0x4f, 0x77, 0x78, 0x08, 0x06, 0xe3, 0x01, 0xa7, 0x82, 0xd7, 0x1a,
+	0xf5, 0xab, 0x35, 0x15, 0xab, 0x8b, 0x18, 0xec, 0x27, 0x3d, 0xf8, 0x0c, 0x0c, 0x01, 0x74, 0x74,
+	0x61, 0xa8, 0x5d, 0x6a, 0x9e, 0x04, 0xec, 0xda, 0x4f, 0xea, 0xc4, 0x05, 0xab, 0xcc, 0x80, 0x4d,
+	0x68, 0x8c, 0x7d, 0xcf, 0x9d, 0x78, 0x47, 0x76, 0x0d, 0x77, 0x40, 0x3f, 0x3e, 0x3a, 0xf1, 0x6c,
+	0x05, 0x01, 0xea, 0xee, 0x78, 0x72, 0xfc, 0xc9, 0xb3, 0x55, 0xdc, 0x85, 0x9d, 0xf1, 0xd9, 0xe9,
+	0xf9, 0x89, 0x37, 0xf1, 0x6c, 0x8d, 0xfc, 0x53, 0x40, 0x8f, 0x29, 0xb1, 0x03, 0x06, 0x9f, 0xf1,
+	0x9b, 0xcc, 0x5e, 0xb2, 0x89, 0x3d, 0x4f, 0xa3, 0xf0, 0x97, 0x70, 0x67, 0xfa, 0x62, 0x8d, 0x2f,
+	0x33, 0x6f, 0xba, 0xf0, 0x76, 0x70, 0x47, 0x9e, 0xf8, 0x94, 0x1c, 0x15, 0xcf, 0x64, 0xc8, 0xcf,
+	0x44, 0x5e, 0x80, 0x99, 0x63, 0x73, 0xb9, 0x35, 0x49, 0xae, 0x52, 0x92, 0xab, 0x92, 0x43, 0x68,
+	0xbb, 0x61, 0x98, 0xce, 0xc7, 0xa7, 0x3f, 0xd6, 0x94, 0x71, 0x7c, 0x0a, 0x5a, 0x10, 0x86, 0x42,
+	0x78, 0x73, 0xd4, 0x29, 0xc9, 0xc9, 0x90, 0x31, 0x80, 0x74, 0x00, 0xe5, 0x66, 0xb6, 0x8c, 0x16,
+	0x8c, 0x92, 0x2f, 0xd0, 0xf9, 0xb8, 0x0c, 0x03, 0x4e, 0x37, 0x58, 0xab, 0xc6, 0xfd, 0x1a, 0xcc,
+	0x3c, 0x45, 0xe2, 0x4d, 0xee, 0x8f, 0x5b, 0x01, 0x24, 0xef, 0xe1, 0xc1, 0xc6, 0x0d, 0xc9, 0xd5,
+	0x38, 0x84, 0xc6, 0x5a, 0x14, 0xb6, 0x8b, 0xcf, 0x40, 0xe4, 0xaf, 0x02, 0x96, 0x1b, 0x86, 0x22,
+	0x02, 0xa9, 0xca, 0x3e, 0x58, 0xf9, 0x45, 0x97, 0x92, 0xde, 0x56, 0x7e, 0xfa, 0x21, 0x16, 0xfe,
+	0x1c, 0x6c, 0x09, 0x26, 0x27, 0x76, 0xaf, 0x00, 0x26, 0xd1, 0xcd, 0x83, 0xa0, 0x55, 0x05, 0x41,
+	0x2f, 0x82, 0x40, 0xde, 0xc2, 0x5e, 0xae, 0x26, 0x75, 0xd4, 0x07, 0x3d, 0xd6, 0x9e, 0xda, 0xa9,
+	0x48, 0xae, 0x28, 0x8f, 0xfe, 0xa8, 0xb0, 0x1b, 0x6f, 0xd9, 0x05, 0x5d, 0xfd, 0x9c, 0x5d, 0x51,
+	0x3c, 0x03, 0x28, 0x46, 0x83, 0x8f, 0x4a, 0x7d, 0x77, 0x06, 0xde, 0x7d, 0x7c, 0x6f, 0x3d, 0x9d,
+	0x69, 0x0d, 0x3f, 0x43, 0xab, 0xf4, 0xe6, 0xf8, 0xa4, 0xd4, 0x53, 0x35, 0xf1, 0x2e, 0xd9, 0x06,
+	0xc9, 0x99, 0xdf, 0x41, 0x23, 0x75, 0x8d, 0x07, 0x9b, 0x3a, 0xa4, 0xc9, 0x74, 0x1f, 0x56, 0x17,
+	0x33, 0x9e, 0x69, 0x5d, 0xfc, 0xee, 0x5e, 0xdd, 0x06, 0x00, 0x00, 0xff, 0xff, 0x41, 0xf8, 0xd7,
+	0xc0, 0x03, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -373,6 +588,7 @@ const _ = grpc.SupportPackageIsVersion4
 type TasksServiceClient interface {
 	AddProject(ctx context.Context, in *AddProjectRequest, opts ...grpc.CallOption) (*AddProjectResponse, error)
 	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*UpdateProjectResponse, error)
+	AddTask(ctx context.Context, in *AddTaskRequest, opts ...grpc.CallOption) (*AddTaskResponse, error)
 }
 
 type tasksServiceClient struct {
@@ -401,10 +617,20 @@ func (c *tasksServiceClient) UpdateProject(ctx context.Context, in *UpdateProjec
 	return out, nil
 }
 
+func (c *tasksServiceClient) AddTask(ctx context.Context, in *AddTaskRequest, opts ...grpc.CallOption) (*AddTaskResponse, error) {
+	out := new(AddTaskResponse)
+	err := c.cc.Invoke(ctx, "/githubtasks.TasksService/AddTask", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TasksServiceServer is the server API for TasksService service.
 type TasksServiceServer interface {
 	AddProject(context.Context, *AddProjectRequest) (*AddProjectResponse, error)
 	UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectResponse, error)
+	AddTask(context.Context, *AddTaskRequest) (*AddTaskResponse, error)
 }
 
 func RegisterTasksServiceServer(s *grpc.Server, srv TasksServiceServer) {
@@ -447,6 +673,24 @@ func _TasksService_UpdateProject_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TasksService_AddTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TasksServiceServer).AddTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/githubtasks.TasksService/AddTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TasksServiceServer).AddTask(ctx, req.(*AddTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _TasksService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "githubtasks.TasksService",
 	HandlerType: (*TasksServiceServer)(nil),
@@ -458,6 +702,10 @@ var _TasksService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProject",
 			Handler:    _TasksService_UpdateProject_Handler,
+		},
+		{
+			MethodName: "AddTask",
+			Handler:    _TasksService_AddTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
