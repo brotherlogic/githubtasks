@@ -65,7 +65,10 @@ func main() {
 	server := Init()
 	server.PrepServer()
 	server.Register = server
-	server.RegisterServerV2("githubtasks", false, false)
+	err := server.RegisterServerV2("githubtasks", false, false)
+	if err != nil {
+		return
+	}
 
 	fmt.Printf("%v", server.Serve())
 }
