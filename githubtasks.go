@@ -10,12 +10,19 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	pb "github.com/brotherlogic/githubtasks/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
+)
+
+const (
+	// KEY where the config is stored
+	KEY = "/github.com/brotherlogic/githubtasks/config"
 )
 
 //Server main server type
 type Server struct {
 	*goserver.GoServer
+	config *pb.Config
 }
 
 // Init builds the server
@@ -51,6 +58,20 @@ func (s *Server) GetState() []*pbg.State {
 	return []*pbg.State{
 		&pbg.State{Key: "no", Value: int64(233)},
 	}
+}
+
+func (s *Server) save(ctx context.Context) {
+	s.KSclient.Save(ctx, KEY, s.config)
+}
+
+func (s *Server) load(ctx context.Context) error {
+	data, _, err := s.KSclient.Read(ctx, KEY, s.config)
+	if err != nil {
+		return err
+	}
+
+	s.config = data.(*pb.Config)
+	return nil
 }
 
 func main() {

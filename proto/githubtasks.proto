@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package githubtasks;
 
+message config {
+  repeated Project projects = 1;
+}
+
 message Project {
   string name = 1;
   repeated Milestone milestones = 2;
