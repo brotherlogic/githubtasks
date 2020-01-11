@@ -7,9 +7,13 @@ import (
 )
 
 func (s *Server) validateIntegrity(ctx context.Context) error {
-	if len(s.config.GetProjects()) == 0 {
-		s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("There are no projects listed"), false)
+	err := s.load(ctx)
+
+	if err == nil {
+		if len(s.config.GetProjects()) == 0 {
+			s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("There are no projects listed"), false)
+		}
 	}
 
-	return nil
+	return err
 }

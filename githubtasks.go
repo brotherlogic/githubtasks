@@ -30,13 +30,14 @@ type Server struct {
 func Init() *Server {
 	s := &Server{
 		GoServer: &goserver.GoServer{},
+		config:   &pb.Config{},
 	}
 	return s
 }
 
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
-	//Pass
+	pb.RegisterTasksServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy
@@ -61,8 +62,8 @@ func (s *Server) GetState() []*pbg.State {
 	}
 }
 
-func (s *Server) save(ctx context.Context) {
-	s.KSclient.Save(ctx, KEY, s.config)
+func (s *Server) save(ctx context.Context) error {
+	return s.KSclient.Save(ctx, KEY, s.config)
 }
 
 func (s *Server) load(ctx context.Context) error {
@@ -87,7 +88,7 @@ func main() {
 	server := Init()
 	server.PrepServer()
 	server.Register = server
-	err := server.RegisterServerV2("githubtasks", false, false)
+	err := server.RegisterServerV2("githubtasks", false, true)
 	if err != nil {
 		return
 	}
