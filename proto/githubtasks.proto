@@ -10,7 +10,6 @@ message config {
 message Project {
   string name = 1;
   repeated Milestone milestones = 2;
-    string github_project = 3;
 }
 
 message Milestone {
@@ -25,6 +24,7 @@ message Milestone {
   }
   MilestoneState state = 3;
   repeated Task tasks = 4;
+  string github_project = 5;
 }
 
 message Task {
@@ -32,7 +32,7 @@ message Task {
   string body = 2;
 
   enum TaskState {
-    CREATED = 0
+    CREATED = 0;
     IDLE = 1;
     ACTIVE = 2;
     COMPLETE = 3;

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/brotherlogic/goserver/utils"
 	"google.golang.org/grpc"
@@ -48,8 +49,8 @@ func main() {
 			pname := scanner.Text()
 			project := &pb.Project{Name: pname}
 			for scanner.Scan() {
-				milestone := scanner.Text()
-				project.Milestones = append(project.Milestones, &pb.Milestone{Name: milestone})
+				elems := strings.Split(scanner.Text(), "~")
+				project.Milestones = append(project.Milestones, &pb.Milestone{Name: elems[0], GithubProject: elems[1]})
 			}
 
 			_, err = client.AddProject(ctx, &pb.AddProjectRequest{Add: project})
