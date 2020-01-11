@@ -32,9 +32,10 @@ message Task {
   string body = 2;
 
   enum TaskState {
-    IDLE = 0;
-    ACTIVE = 1;
-    COMPLETE = 2;
+    CREATED = 0
+    IDLE = 1;
+    ACTIVE = 2;
+    COMPLETE = 3;
   }
   TaskState state = 4;
   int32 number = 5;
