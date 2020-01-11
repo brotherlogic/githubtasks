@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"golang.org/x/net/context"
 
@@ -31,4 +32,34 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 	}
 
 	return err
+}
+
+func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
+	err := s.load(ctx)
+
+	if err == nil {
+		for _, project := range s.config.GetProjects() {
+			for _, milestone := range project.GetMilestones() {
+				if milestone.GetState() == pb.Milestone_ACTIVE {
+					break
+				}
+
+				if milestone.GetState() == pb.Milestone_CREATED {
+					num, err := s.github.createMilestone(ctx, milestone)
+
+					if err != nil {
+						return time.Now().Add(time.Minute * 5), err
+					}
+
+					milestone.Number = num
+					milestone.State = pb.Milestone_ACTIVE
+					break
+				}
+			}
+		}
+
+		err = s.save(ctx)
+	}
+
+	return time.Now().Add(time.Minute * 5), err
 }

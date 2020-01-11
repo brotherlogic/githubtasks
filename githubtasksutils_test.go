@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -10,12 +11,24 @@ import (
 	pb "github.com/brotherlogic/githubtasks/proto"
 )
 
+type testGithub struct {
+	fail bool
+}
+
+func (t *testGithub) createMilestone(ctx context.Context, m *pb.Milestone) (int32, error) {
+	if t.fail {
+		return -1, fmt.Errorf("Built to fail")
+	}
+	return 10, nil
+}
+
 func InitTestServer() *Server {
 	s := Init()
 	s.SkipLog = true
 	s.SkipIssue = true
 	s.GoServer.KSclient = *keystoreclient.GetTestClient(".test")
 	s.GoServer.KSclient.Save(context.Background(), KEY, &pb.Config{LastUpdate: time.Now().Unix()})
+	s.github = &testGithub{}
 	return s
 }
 
@@ -41,6 +54,34 @@ func TestEmptyMilestones(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error in validation: %v", err)
 	}
+
+	_, err = s.processProjects(context.Background())
+
+	if err != nil {
+		t.Errorf("Error when processing: %v", err)
+	}
+}
+
+func TestEmptyMilestonesWithAddFail(t *testing.T) {
+	s := InitTestServer()
+	s.github = &testGithub{fail: true}
+
+	_, err := s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "teting"}}}})
+	if err != nil {
+		t.Errorf("Error adding project: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+
+	_, err = s.processProjects(context.Background())
+
+	if err == nil {
+		t.Errorf("Processing did not fail")
+	}
 }
 
 func TestActiveMilestone(t *testing.T) {
@@ -56,4 +97,11 @@ func TestActiveMilestone(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error in validation: %v", err)
 	}
+
+	_, err = s.processProjects(context.Background())
+
+	if err != nil {
+		t.Errorf("Error when processing: %v", err)
+	}
+
 }
