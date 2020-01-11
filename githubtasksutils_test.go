@@ -27,3 +27,33 @@ func TestEmptyConfig(t *testing.T) {
 		t.Errorf("Error in validation: %v", err)
 	}
 }
+
+func TestEmptyMilestones(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "teting"}}}})
+	if err != nil {
+		t.Errorf("Error adding project: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+}
+
+func TestActiveMilestone(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "teting", State: pb.Milestone_ACTIVE}}}})
+	if err != nil {
+		t.Errorf("Error adding project: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+}
