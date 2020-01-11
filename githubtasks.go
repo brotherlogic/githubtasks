@@ -11,9 +11,33 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	ghcpb "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/githubtasks/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
 )
+
+type github interface {
+	createMilestone(ctx context.Context, m *pb.Milestone) (int32, error)
+}
+
+type prodGithub struct {
+	dial func(server string) (*grpc.ClientConn, error)
+}
+
+func (p *prodGithub) createMilestone(ctx context.Context, m *pb.Milestone) (int32, error) {
+	conn, err := p.dial("githubcard")
+	if err != nil {
+		return -1, err
+	}
+	defer conn.Close()
+
+	client := ghcpb.NewGithubClient(conn)
+	resp, err := client.AddMilestone(ctx, &ghcpb.AddMilestoneRequest{Title: m.GetName(), Repo: m.GetGithubProject()})
+	if err != nil {
+		return -1, err
+	}
+	return resp.GetNumber(), err
+}
 
 const (
 	// KEY where the config is stored
@@ -24,6 +48,7 @@ const (
 type Server struct {
 	*goserver.GoServer
 	config *pb.Config
+	github github
 }
 
 // Init builds the server
@@ -32,6 +57,7 @@ func Init() *Server {
 		GoServer: &goserver.GoServer{},
 		config:   &pb.Config{},
 	}
+	s.github = &prodGithub{dial: s.DialMaster}
 	return s
 }
 
@@ -94,6 +120,7 @@ func main() {
 	}
 
 	server.RegisterRepeatingTask(server.validateIntegrity, "validate_integrity", time.Hour)
+	server.RegisterLockingTask(server.processProjects, "process_projects")
 
 	fmt.Printf("%v", server.Serve())
 }
