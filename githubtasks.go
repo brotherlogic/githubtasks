@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/brotherlogic/goserver"
 	"golang.org/x/net/context"
@@ -90,6 +91,8 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	server.RegisterRepeatingTask(server.validateIntegrity, "validate_integrity", time.Hour)
 
 	fmt.Printf("%v", server.Serve())
 }
