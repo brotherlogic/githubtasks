@@ -1,8 +1,12 @@
 package main
 
-import "golang.org/x/net/context"
+import (
+	"fmt"
 
-import pb "github.com/brotherlogic/githubtasks/proto"
+	"golang.org/x/net/context"
+
+	pb "github.com/brotherlogic/githubtasks/proto"
+)
 
 // AddProject to the system
 func (s *Server) AddProject(ctx context.Context, req *pb.AddProjectRequest) (*pb.AddProjectResponse, error) {
@@ -12,4 +16,20 @@ func (s *Server) AddProject(ctx context.Context, req *pb.AddProjectRequest) (*pb
 		err = s.save(ctx)
 	}
 	return &pb.AddProjectResponse{}, err
+}
+
+// AddTask to the system
+func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTaskResponse, error) {
+	task := &pb.Task{Title: req.GetTitle(), Body: req.GetBody()}
+
+	for _, p := range s.config.GetProjects() {
+		for _, m := range p.GetMilestones() {
+			if m.GetName() == req.GetMilestoneName() && m.GetNumber() == req.GetMilestoneNumber() {
+				m.Tasks = append(m.Tasks, task)
+				return &pb.AddTaskResponse{Task: task}, nil
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("Could not locate milestone %v/%v", req.GetMilestoneName(), req.GetMilestoneNumber())
 }

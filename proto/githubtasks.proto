@@ -71,5 +71,5 @@ message AddTaskResponse {
 service TasksService {
   rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
   //rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
-  //rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
+  rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
 }
