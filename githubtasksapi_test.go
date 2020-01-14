@@ -17,6 +17,14 @@ func TestAddProject(t *testing.T) {
 		t.Errorf("Project was not added")
 	}
 
+	presp, err := s.GetProjects(context.Background(), &pb.GetProjectsRequest{})
+	if err != nil {
+		t.Fatalf("Error getting projects: %v", err)
+	}
+	if len(presp.GetProjects()) != 1 {
+		t.Fatalf("Project not created correctly: %v", presp)
+	}
+
 	resp, err := s.GetMilestones(context.Background(), &pb.GetMilestonesRequest{GithubProject: "madeup"})
 	if err != nil {
 		t.Fatalf("Error getting milestones: %v", err)

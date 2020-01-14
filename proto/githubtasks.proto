@@ -76,8 +76,17 @@ message GetMilestonesResponse {
   repeated Milestone milestones = 1;
 }
 
+message GetProjectsRequest {
+ 
+}
+
+message GetProjectsResponse {
+  repeated Project projects = 1;
+}
+
 service TasksService {
   rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
+  rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {};
   //rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
   rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
   rpc GetMilestones(GetMilestonesRequest) returns (GetMilestonesResponse) {};
