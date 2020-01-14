@@ -68,8 +68,17 @@ message AddTaskResponse {
   Task task = 1;
 }
 
+message GetMilestonesRequest{
+  string github_project = 1;
+}
+
+message GetMilestonesResponse {
+  repeated Milestone milestones = 1;
+}
+
 service TasksService {
   rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
   //rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
   rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
+  rpc GetMilestones(GetMilestonesRequest) returns (GetMilestonesResponse) {};
 }
