@@ -34,6 +34,16 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 	return nil, fmt.Errorf("Could not locate milestone %v/%v", req.GetMilestoneName(), req.GetMilestoneNumber())
 }
 
+// GetProjects for the system
+func (s *Server) GetProjects(ctx context.Context, req *pb.GetProjectsRequest) (*pb.GetProjectsResponse, error) {
+	resp := &pb.GetProjectsResponse{Projects: []*pb.Project{}}
+	for _, p := range s.config.GetProjects() {
+		resp.Projects = append(resp.Projects, p)
+	}
+
+	return resp, nil
+}
+
 // GetMilestones for the system
 func (s *Server) GetMilestones(ctx context.Context, req *pb.GetMilestonesRequest) (*pb.GetMilestonesResponse, error) {
 	resp := &pb.GetMilestonesResponse{Milestones: []*pb.Milestone{}}
