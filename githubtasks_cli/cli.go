@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -33,6 +34,21 @@ func main() {
 	defer cancel()
 
 	switch os.Args[1] {
+	case "milestones":
+		milestoneFlags := flag.NewFlagSet("Milestones", flag.ExitOnError)
+		var ghp = milestoneFlags.String("github_project", "", "Project file to add")
+
+		if err := milestoneFlags.Parse(os.Args[2:]); err == nil {
+			resp, err := client.GetMilestones(ctx, &pb.GetMilestonesRequest{GithubProject: *ghp})
+			if err != nil {
+				log.Fatalf("Error getting milestones: %v", err)
+			}
+
+			for _, m := range resp.GetMilestones() {
+				fmt.Printf("%v. %v\n", m.GetNumber(), m.GetName())
+			}
+		}
+
 	case "project":
 		projectFlags := flag.NewFlagSet("Project", flag.ExitOnError)
 		var file = projectFlags.String("file", "", "Project file to add")

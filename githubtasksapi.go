@@ -39,7 +39,7 @@ func (s *Server) GetMilestones(ctx context.Context, req *pb.GetMilestonesRequest
 	resp := &pb.GetMilestonesResponse{Milestones: []*pb.Milestone{}}
 	for _, p := range s.config.GetProjects() {
 		for _, m := range p.GetMilestones() {
-			if m.GetGithubProject() == req.GetGithubProject() {
+			if len(req.GetGithubProject()) == 0 || m.GetGithubProject() == req.GetGithubProject() {
 				resp.Milestones = append(resp.Milestones, m)
 			}
 		}
