@@ -33,3 +33,17 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 
 	return nil, fmt.Errorf("Could not locate milestone %v/%v", req.GetMilestoneName(), req.GetMilestoneNumber())
 }
+
+// GetMilestones for the system
+func (s *Server) GetMilestones(ctx context.Context, req *pb.GetMilestonesRequest) (*pb.GetMilestonesResponse, error) {
+	resp := &pb.GetMilestonesResponse{Milestones: []*pb.Milestone{}}
+	for _, p := range s.config.GetProjects() {
+		for _, m := range p.GetMilestones() {
+			if m.GetGithubProject() == req.GetGithubProject() {
+				resp.Milestones = append(resp.Milestones, m)
+			}
+		}
+	}
+
+	return resp, nil
+}
