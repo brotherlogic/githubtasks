@@ -26,7 +26,7 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 		for _, m := range p.GetMilestones() {
 			if m.GetName() == req.GetMilestoneName() && m.GetNumber() == req.GetMilestoneNumber() {
 				m.Tasks = append(m.Tasks, task)
-				return &pb.AddTaskResponse{Task: task}, nil
+				return &pb.AddTaskResponse{Task: task}, s.save(ctx)
 			}
 		}
 	}
