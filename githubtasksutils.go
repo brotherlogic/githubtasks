@@ -24,6 +24,17 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 					activeMilestone = true
 					if len(milestone.GetTasks()) == 0 {
 						s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v of %v has no tasks", project.GetName(), milestone.GetName()), false)
+					} else {
+						activeTask := false
+						for _, task := range milestone.GetTasks() {
+							if task.State == pb.Task_ACTIVE {
+								activeTask = true
+							}
+						}
+
+						if !activeTask {
+							s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v of %v has no active tasks", project.GetName(), milestone.GetName()), false)
+						}
 					}
 				}
 			}

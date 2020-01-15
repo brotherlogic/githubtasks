@@ -104,4 +104,63 @@ func TestActiveMilestone(t *testing.T) {
 		t.Errorf("Error when processing: %v", err)
 	}
 
+	err = s.validateIntegrity(context.Background())
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+
+}
+
+func TestNoActiveTasks(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "teting", State: pb.Milestone_ACTIVE, Tasks: []*pb.Task{&pb.Task{Title: "Hello"}}}}}})
+	if err != nil {
+		t.Errorf("Error adding project: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+
+	_, err = s.processProjects(context.Background())
+
+	if err != nil {
+		t.Errorf("Error when processing: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+
+}
+
+func TestActiveTasks(t *testing.T) {
+	s := InitTestServer()
+
+	_, err := s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "teting", State: pb.Milestone_ACTIVE, Tasks: []*pb.Task{&pb.Task{Title: "Hello", State: pb.Task_ACTIVE}}}}}})
+	if err != nil {
+		t.Errorf("Error adding project: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+
+	_, err = s.processProjects(context.Background())
+
+	if err != nil {
+		t.Errorf("Error when processing: %v", err)
+	}
+
+	err = s.validateIntegrity(context.Background())
+	if err != nil {
+		t.Errorf("Error in validation: %v", err)
+	}
+
 }
