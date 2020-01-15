@@ -115,6 +115,18 @@ func (s *Server) load(ctx context.Context) error {
 	}
 
 	s.config = data.(*pb.Config)
+
+	// Ensure all tasks have a uid
+	for _, p := range s.config.GetProjects() {
+		for _, m := range p.GetMilestones() {
+			for _, t := range m.GetTasks() {
+				if t.GetUid() == 0 {
+					t.Uid = time.Now().UnixNano()
+				}
+			}
+		}
+	}
+
 	return nil
 }
 

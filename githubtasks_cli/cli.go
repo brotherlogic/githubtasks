@@ -46,7 +46,7 @@ func main() {
 			}
 
 			for _, m := range resp.GetMilestones() {
-				fmt.Printf("%v. %v (%v) [%v]\n", m.GetNumber(), m.GetName(), len(m.GetTasks()), m.GetGithubProject())
+				fmt.Printf("%v. %v (%v) [%v]\n", m.GetNumber(), m.GetName(), m.GetTasks(), m.GetGithubProject())
 			}
 		}
 	case "projects":
