@@ -34,6 +34,23 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 	return nil, fmt.Errorf("Could not locate milestone %v/%v", req.GetMilestoneName(), req.GetMilestoneNumber())
 }
 
+// DeleteTask to the system
+func (s *Server) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest) (*pb.DeleteTaskResponse, error) {
+
+	for _, p := range s.config.GetProjects() {
+		for _, m := range p.GetMilestones() {
+			for i, t := range m.GetTasks() {
+				if t.GetUid() == req.GetUid() {
+					m.Tasks = append(m.Tasks[:i], m.Tasks[i+1:]...)
+					return &pb.DeleteTaskResponse{Task: t}, nil
+				}
+			}
+		}
+	}
+
+	return &pb.DeleteTaskResponse{}, nil
+}
+
 // GetProjects for the system
 func (s *Server) GetProjects(ctx context.Context, req *pb.GetProjectsRequest) (*pb.GetProjectsResponse, error) {
 	resp := &pb.GetProjectsResponse{Projects: []*pb.Project{}}

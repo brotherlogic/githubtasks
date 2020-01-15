@@ -85,10 +85,19 @@ message GetProjectsResponse {
   repeated Project projects = 1;
 }
 
+message DeleteTaskRequest {
+  int64 uid = 1;
+}
+
+message DeleteTaskResponse {
+  Task task = 1;
+}
+
 service TasksService {
   rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
   rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {};
   //rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
   rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse) {};
   rpc GetMilestones(GetMilestonesRequest) returns (GetMilestonesResponse) {};
 }

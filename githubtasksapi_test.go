@@ -47,4 +47,21 @@ func TestAddProject(t *testing.T) {
 		t.Errorf("Task add did not fail")
 	}
 
+	resp, err = s.GetMilestones(context.Background(), &pb.GetMilestonesRequest{})
+	if err != nil {
+		t.Fatalf("Cannot get milestones")
+	}
+
+	for _, m := range resp.GetMilestones() {
+		for _, tsk := range m.GetTasks() {
+			td, err := s.DeleteTask(context.Background(), &pb.DeleteTaskRequest{Uid: tsk.GetUid()})
+			if err != nil {
+				t.Errorf("Bad task delete")
+			}
+
+			if td.GetTask() == nil {
+				t.Errorf("Bad task find")
+			}
+		}
+	}
 }
