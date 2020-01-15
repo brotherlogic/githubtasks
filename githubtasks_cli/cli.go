@@ -58,6 +58,21 @@ func main() {
 		for i, p := range resp.GetProjects() {
 			fmt.Printf("%v. %v\n", i, p.GetName())
 		}
+	case "delete_task":
+		num, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatalf("Bad number: %v", err)
+		}
+		resp, err := client.DeleteTask(ctx, &pb.DeleteTaskRequest{Uid: int64(num)})
+		if err != nil {
+			log.Fatalf("Error getting milestones: %v", err)
+		}
+		if resp.GetTask() != nil {
+			fmt.Printf("Task deleted\n")
+		} else {
+			fmt.Printf("Task not deleted\n")
+		}
+
 	case "project":
 		projectFlags := flag.NewFlagSet("Project", flag.ExitOnError)
 		var file = projectFlags.String("file", "", "Project file to add")
@@ -104,6 +119,7 @@ func main() {
 			}
 			for scanner.Scan() {
 				task := scanner.Text()
+				fmt.Printf("Adding %v\n", task)
 				_, err = client.AddTask(ctx, &pb.AddTaskRequest{MilestoneName: elems[0], MilestoneNumber: int32(number), Title: task, Body: "Auto added"})
 			}
 
