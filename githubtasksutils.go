@@ -56,6 +56,23 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 		for _, project := range s.config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
 				if milestone.GetState() == pb.Milestone_ACTIVE {
+					for _, task := range milestone.GetTasks() {
+						if task.GetState() == pb.Task_ACTIVE {
+							break
+						}
+
+						if task.GetState() == pb.Task_CREATED {
+							num, err := s.github.createTask(ctx, task, milestone.GetGithubProject(), milestone.GetNumber())
+							if err != nil {
+								return time.Now().Add(time.Minute * 5), err
+							}
+
+							task.Number = num
+							task.State = pb.Task_ACTIVE
+							break
+						}
+					}
+
 					break
 				}
 

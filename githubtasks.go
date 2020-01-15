@@ -18,6 +18,7 @@ import (
 
 type github interface {
 	createMilestone(ctx context.Context, m *pb.Milestone) (int32, error)
+	createTask(ctx context.Context, m *pb.Task, service string, milestoneNumber int32) (int32, error)
 }
 
 type prodGithub struct {
@@ -33,6 +34,21 @@ func (p *prodGithub) createMilestone(ctx context.Context, m *pb.Milestone) (int3
 
 	client := ghcpb.NewGithubClient(conn)
 	resp, err := client.AddMilestone(ctx, &ghcpb.AddMilestoneRequest{Title: m.GetName(), Repo: m.GetGithubProject()})
+	if err != nil {
+		return -1, err
+	}
+	return resp.GetNumber(), err
+}
+
+func (p *prodGithub) createTask(ctx context.Context, t *pb.Task, service string, mn int32) (int32, error) {
+	conn, err := p.dial("githubcard")
+	if err != nil {
+		return -1, err
+	}
+	defer conn.Close()
+
+	client := ghcpb.NewGithubClient(conn)
+	resp, err := client.AddIssue(ctx, &ghcpb.Issue{Title: t.Title, Body: t.Body, Service: service, MilestoneNumber: mn})
 	if err != nil {
 		return -1, err
 	}
