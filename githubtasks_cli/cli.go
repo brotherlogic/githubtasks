@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/brotherlogic/goserver/utils"
@@ -45,10 +46,18 @@ func main() {
 			}
 
 			for _, m := range resp.GetMilestones() {
-				fmt.Printf("%v. %v\n", m.GetNumber(), m.GetName())
+				fmt.Printf("%v. %v (%v) [%v]\n", m.GetNumber(), m.GetName(), len(m.GetTasks()), m.GetGithubProject())
 			}
 		}
+	case "projects":
+		resp, err := client.GetProjects(ctx, &pb.GetProjectsRequest{})
+		if err != nil {
+			log.Fatalf("Error getting milestones: %v", err)
+		}
 
+		for i, p := range resp.GetProjects() {
+			fmt.Printf("%v. %v\n", i, p.GetName())
+		}
 	case "project":
 		projectFlags := flag.NewFlagSet("Project", flag.ExitOnError)
 		var file = projectFlags.String("file", "", "Project file to add")
@@ -74,5 +83,31 @@ func main() {
 				log.Fatalf("Error adding project: %v", err)
 			}
 		}
+	case "milestone_tasks":
+		projectFlags := flag.NewFlagSet("Project", flag.ExitOnError)
+		var file = projectFlags.String("file", "", "Project file to add")
+
+		if err := projectFlags.Parse(os.Args[2:]); err == nil {
+			file, err := os.Open(*file)
+			if err != nil {
+				log.Fatalf("Error reading file: %v", err)
+			}
+			defer file.Close()
+
+			scanner := bufio.NewScanner(file)
+			scanner.Scan()
+			ms := scanner.Text()
+			elems := strings.Split(ms, "~")
+			number, err := strconv.Atoi(elems[1])
+			if err != nil {
+				log.Fatalf("Pah: %v", err)
+			}
+			for scanner.Scan() {
+				task := scanner.Text()
+				_, err = client.AddTask(ctx, &pb.AddTaskRequest{MilestoneName: elems[0], MilestoneNumber: int32(number), Title: task, Body: "Auto added"})
+			}
+
+		}
+
 	}
 }
