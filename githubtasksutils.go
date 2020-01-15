@@ -63,6 +63,7 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 
 						if task.GetState() == pb.Task_CREATED {
 							num, err := s.github.createTask(ctx, task, milestone.GetGithubProject(), milestone.GetNumber())
+							s.Log(fmt.Sprintf("Added task %v -> %v,%v", task.GetTitle(), num, err))
 							if err != nil {
 								return time.Now().Add(time.Minute * 5), err
 							}
