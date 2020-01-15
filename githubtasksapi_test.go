@@ -7,6 +7,19 @@ import (
 	pb "github.com/brotherlogic/githubtasks/proto"
 )
 
+func TestDeleteTask(t *testing.T) {
+	s := InitTestServer()
+
+	tr, err := s.DeleteTask(context.Background(), &pb.DeleteTaskRequest{})
+	if err != nil {
+		t.Errorf("Failure to delete empty task: %v", err)
+	}
+
+	if tr.GetTask() != nil {
+		t.Errorf("Stars have clashed: %v", tr)
+	}
+}
+
 func TestAddProject(t *testing.T) {
 	s := InitTestServer()
 
@@ -47,4 +60,21 @@ func TestAddProject(t *testing.T) {
 		t.Errorf("Task add did not fail")
 	}
 
+	resp, err = s.GetMilestones(context.Background(), &pb.GetMilestonesRequest{})
+	if err != nil {
+		t.Fatalf("Cannot get milestones")
+	}
+
+	for _, m := range resp.GetMilestones() {
+		for _, tsk := range m.GetTasks() {
+			td, err := s.DeleteTask(context.Background(), &pb.DeleteTaskRequest{Uid: tsk.GetUid()})
+			if err != nil {
+				t.Errorf("Bad task delete")
+			}
+
+			if td.GetTask() == nil {
+				t.Errorf("Bad task find")
+			}
+		}
+	}
 }
