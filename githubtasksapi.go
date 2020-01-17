@@ -42,13 +42,13 @@ func (s *Server) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest) (*pb
 			for i, t := range m.GetTasks() {
 				if t.GetUid() == req.GetUid() {
 					m.Tasks = append(m.Tasks[:i], m.Tasks[i+1:]...)
-					return &pb.DeleteTaskResponse{Task: t}, nil
+					return &pb.DeleteTaskResponse{Task: t}, s.save(ctx)
 				}
 			}
 		}
 	}
 
-	return &pb.DeleteTaskResponse{}, s.save(ctx)
+	return &pb.DeleteTaskResponse{}, nil
 }
 
 // GetProjects for the system
