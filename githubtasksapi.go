@@ -48,7 +48,7 @@ func (s *Server) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest) (*pb
 		}
 	}
 
-	return &pb.DeleteTaskResponse{}, nil
+	return &pb.DeleteTaskResponse{}, s.save(ctx)
 }
 
 // GetProjects for the system
