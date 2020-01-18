@@ -194,3 +194,38 @@ func TestActiveTasks(t *testing.T) {
 	}
 
 }
+
+func TestAddTasks(t *testing.T) {
+	s := InitTestServer()
+	s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "Testing", State: pb.Milestone_ACTIVE, Number: 1, Tasks: []*pb.Task{}}}}})
+	_, err := s.processProjects(context.Background())
+
+	_, err = s.AddTask(context.Background(),
+		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add stuff", Body: "Do Stuff"})
+	_, err = s.AddTask(context.Background(),
+		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add more stuff", Body: "Do Stuff"})
+
+	_, err = s.processProjects(context.Background())
+	if err != nil {
+		t.Fatalf("Bad project proc")
+	}
+
+	resp, err := s.GetMilestones(context.Background(), &pb.GetMilestonesRequest{})
+	if err != nil {
+		t.Fatalf("Cannot get milestones")
+	}
+
+	chosenTask := ""
+	for _, m := range resp.GetMilestones() {
+		for _, tsk := range m.GetTasks() {
+			if tsk.GetNumber() > 0 {
+				chosenTask = tsk.GetTitle()
+			}
+		}
+	}
+
+	if chosenTask != "Add stuff" {
+		t.Errorf("Ordering is out of line: %v", resp.GetMilestones())
+	}
+
+}

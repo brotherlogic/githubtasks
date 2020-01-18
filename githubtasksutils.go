@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"golang.org/x/net/context"
@@ -56,6 +57,12 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 		for _, project := range s.config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
 				if milestone.GetState() == pb.Milestone_ACTIVE {
+
+					// Sort tasks by the UID
+					sort.SliceStable(milestone.GetTasks(), func(i, j int) bool {
+						return milestone.GetTasks()[i].GetUid() < milestone.GetTasks()[j].GetUid()
+					})
+
 					for _, task := range milestone.GetTasks() {
 						if task.GetState() == pb.Task_ACTIVE {
 							break
