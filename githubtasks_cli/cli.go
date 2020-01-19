@@ -46,7 +46,7 @@ func main() {
 			}
 
 			for _, m := range resp.GetMilestones() {
-				fmt.Printf("%v. %v [%v]\n", m.GetNumber(), m.GetName(), m.GetGithubProject())
+				fmt.Printf("%v. %v [%v - %v]\n", m.GetNumber(), m.GetName(), m.GetGithubProject(), m.GetState())
 				for _, tk := range m.GetTasks() {
 					fmt.Printf("  %v\n", tk)
 				}
