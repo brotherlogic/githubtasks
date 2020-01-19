@@ -86,6 +86,7 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 		for _, project := range s.config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
 				if milestone.GetState() == pb.Milestone_ACTIVE {
+					countActive := 0
 
 					// Sort tasks by the UID
 					sort.SliceStable(milestone.GetTasks(), func(i, j int) bool {
@@ -94,10 +95,12 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 
 					for _, task := range milestone.GetTasks() {
 						if task.GetState() == pb.Task_ACTIVE {
+							countActive++
 							break
 						}
 
 						if task.GetState() == pb.Task_CREATED {
+							countActive++
 							num, err := s.github.createTask(ctx, task, milestone.GetGithubProject(), milestone.GetNumber())
 							s.Log(fmt.Sprintf("Added task %v -> %v,%v", task.GetTitle(), num, err))
 							if err != nil {
@@ -108,6 +111,12 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 							task.State = pb.Task_ACTIVE
 							break
 						}
+					}
+
+					// If we've reached this point, we have no active taskss and no tasks that need creation
+					if len(milestone.GetTasks()) > 0 && countActive == 0 {
+						//Close out the milestone
+						milestone.State = pb.Milestone_COMPLETE
 					}
 
 					break

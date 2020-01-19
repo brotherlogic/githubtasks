@@ -252,6 +252,25 @@ func TestUpdateTasks(t *testing.T) {
 		t.Errorf("Bad update: %v", err)
 	}
 }
+
+func TestCompleteMilestone(t *testing.T) {
+	s := InitTestServer()
+	s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "Testing", State: pb.Milestone_ACTIVE, Number: 1, Tasks: []*pb.Task{}}}}})
+	_, err := s.processProjects(context.Background())
+
+	_, err = s.AddTask(context.Background(),
+		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add stuff", Body: "Do Stuff"})
+	_, err = s.processProjects(context.Background())
+	_, err = s.updateProjects(context.Background())
+
+	if err != nil {
+		t.Errorf("Bad update: %v", err)
+	}
+
+	// Completes the milestone
+	_, err = s.processProjects(context.Background())
+}
+
 func TestUpdateTasksWithFail(t *testing.T) {
 	s := InitTestServer()
 
