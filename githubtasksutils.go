@@ -85,6 +85,8 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 	if err == nil {
 		for _, project := range s.config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
+				s.Log(fmt.Sprintf("Process: %v -> %v", milestone.GetName(), milestone.GetState()))
+				time.Sleep(time.Second * 5)
 				if milestone.GetState() == pb.Milestone_ACTIVE {
 					countActive := 0
 
