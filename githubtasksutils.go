@@ -7,6 +7,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	ghcpb "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/githubtasks/proto"
 )
 
@@ -48,6 +49,34 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 	}
 
 	return err
+}
+
+func (s *Server) updateProjects(ctx context.Context) (time.Time, error) {
+	err := s.load(ctx)
+
+	if err == nil {
+		for _, project := range s.config.GetProjects() {
+			for _, milestone := range project.GetMilestones() {
+				if milestone.GetState() == pb.Milestone_ACTIVE {
+					for _, task := range milestone.GetTasks() {
+						if task.GetState() == pb.Task_ACTIVE {
+							issue, err := s.github.getIssue(ctx, milestone.GetGithubProject(), task.GetNumber())
+							if err != nil {
+								return time.Now().Add(time.Minute * 5), err
+							}
+
+							if issue.GetState() == ghcpb.Issue_CLOSED {
+								task.State = pb.Task_COMPLETE
+							}
+							err = s.save(ctx)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return time.Now().Add(time.Minute * 5), err
 }
 
 func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
