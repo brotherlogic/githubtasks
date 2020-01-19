@@ -17,6 +17,7 @@ import (
 )
 
 type github interface {
+	getIssue(ctx context.Context, service string, number int32) (*ghcpb.Issue, error)
 	createMilestone(ctx context.Context, m *pb.Milestone) (int32, error)
 	createTask(ctx context.Context, m *pb.Task, service string, milestoneNumber int32) (int32, error)
 }
@@ -38,6 +39,21 @@ func (p *prodGithub) createMilestone(ctx context.Context, m *pb.Milestone) (int3
 		return -1, err
 	}
 	return resp.GetNumber(), err
+}
+
+func (p *prodGithub) getIssue(ctx context.Context, service string, number int32) (*ghcpb.Issue, error) {
+	conn, err := p.dial("githubcard")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := ghcpb.NewGithubClient(conn)
+	resp, err := client.Get(ctx, &ghcpb.Issue{Service: service, Number: number})
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
 }
 
 func (p *prodGithub) createTask(ctx context.Context, t *pb.Task, service string, mn int32) (int32, error) {
@@ -149,6 +165,7 @@ func main() {
 
 	server.RegisterRepeatingTask(server.validateIntegrity, "validate_integrity", time.Minute*5)
 	server.RegisterLockingTask(server.processProjects, "process_projects")
+	server.RegisterLockingTask(server.updateProjects, "update_projects")
 
 	fmt.Printf("%v", server.Serve())
 }

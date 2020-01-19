@@ -8,6 +8,7 @@ import (
 
 	"github.com/brotherlogic/keystore/client"
 
+	ghcpb "github.com/brotherlogic/githubcard/proto"
 	pb "github.com/brotherlogic/githubtasks/proto"
 )
 
@@ -27,6 +28,13 @@ func (t *testGithub) createTask(ctx context.Context, m *pb.Task, service string,
 		return -1, fmt.Errorf("Built to fail")
 	}
 	return 10, nil
+}
+
+func (t *testGithub) getIssue(ctx context.Context, service string, number int32) (*ghcpb.Issue, error) {
+	if t.fail {
+		return nil, fmt.Errorf("Built to fail")
+	}
+	return &ghcpb.Issue{State: ghcpb.Issue_CLOSED}, nil
 }
 
 func InitTestServer() *Server {
@@ -228,4 +236,36 @@ func TestAddTasks(t *testing.T) {
 		t.Errorf("Ordering is out of line: %v", resp.GetMilestones())
 	}
 
+}
+
+func TestUpdateTasks(t *testing.T) {
+	s := InitTestServer()
+	s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "Testing", State: pb.Milestone_ACTIVE, Number: 1, Tasks: []*pb.Task{}}}}})
+	_, err := s.processProjects(context.Background())
+
+	_, err = s.AddTask(context.Background(),
+		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add stuff", Body: "Do Stuff"})
+	_, err = s.processProjects(context.Background())
+	_, err = s.updateProjects(context.Background())
+
+	if err != nil {
+		t.Errorf("Bad update: %v", err)
+	}
+}
+func TestUpdateTasksWithFail(t *testing.T) {
+	s := InitTestServer()
+
+	s.AddProject(context.Background(), &pb.AddProjectRequest{Add: &pb.Project{Name: "Hello", Milestones: []*pb.Milestone{&pb.Milestone{Name: "Testing", State: pb.Milestone_ACTIVE, Number: 1, Tasks: []*pb.Task{}}}}})
+	_, err := s.processProjects(context.Background())
+
+	_, err = s.AddTask(context.Background(),
+		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add stuff", Body: "Do Stuff"})
+	_, err = s.processProjects(context.Background())
+
+	s.github = &testGithub{fail: true}
+	_, err = s.updateProjects(context.Background())
+
+	if err == nil {
+		t.Errorf("Bad update: %v", err)
+	}
 }
