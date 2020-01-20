@@ -47,7 +47,7 @@ func TestAddProject(t *testing.T) {
 	}
 
 	_, err = s.AddTask(context.Background(),
-		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add stuff", Body: "Do Stuff"})
+		&pb.AddTaskRequest{MilestoneName: "Testing", MilestoneNumber: 1, Title: "Add stuff", Body: "Do Stuff", GithubProject: "madeup"})
 
 	if err != nil {
 		t.Errorf("Task add failed: %v", err)
