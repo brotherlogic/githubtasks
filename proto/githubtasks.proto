@@ -63,6 +63,7 @@ message AddTaskRequest {
   int32 milestone_number = 2;
   string title = 3;
   string body = 4;
+  string github_project = 5;
 }
 
 message AddTaskResponse {

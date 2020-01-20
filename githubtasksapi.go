@@ -24,7 +24,7 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 
 	for _, p := range s.config.GetProjects() {
 		for _, m := range p.GetMilestones() {
-			if m.GetName() == req.GetMilestoneName() && m.GetNumber() == req.GetMilestoneNumber() {
+			if m.GetName() == req.GetMilestoneName() && m.GetNumber() == req.GetMilestoneNumber() && m.GetGithubProject() == req.GetGithubProject() {
 				m.Tasks = append(m.Tasks, task)
 				return &pb.AddTaskResponse{Task: task}, s.save(ctx)
 			}
