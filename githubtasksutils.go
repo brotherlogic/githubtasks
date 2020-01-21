@@ -92,7 +92,7 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 
 					// Sort tasks by the UID
 					sort.SliceStable(milestone.GetTasks(), func(i, j int) bool {
-						return milestone.GetTasks()[i].GetUid() < milestone.GetTasks()[j].GetUid()
+						return milestone.GetTasks()[i].GetUid() > milestone.GetTasks()[j].GetUid()
 					})
 
 					for _, task := range milestone.GetTasks() {

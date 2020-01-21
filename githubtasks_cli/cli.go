@@ -123,7 +123,7 @@ func main() {
 			for scanner.Scan() {
 				task := scanner.Text()
 				fmt.Printf("Adding %v\n", task)
-				_, err = client.AddTask(ctx, &pb.AddTaskRequest{MilestoneName: elems[0], MilestoneNumber: int32(number), Title: task, Body: "Auto added"})
+				_, err = client.AddTask(ctx, &pb.AddTaskRequest{MilestoneName: elems[0], MilestoneNumber: int32(number), Title: task, Body: "Auto added", GithubProject: elems[2]})
 			}
 
 		}
