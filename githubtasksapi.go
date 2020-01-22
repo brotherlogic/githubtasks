@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/brotherlogic/githubtasks/proto"
 )
@@ -25,6 +27,11 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 	for _, p := range s.config.GetProjects() {
 		for _, m := range p.GetMilestones() {
 			if m.GetName() == req.GetMilestoneName() && m.GetNumber() == req.GetMilestoneNumber() && m.GetGithubProject() == req.GetGithubProject() {
+				for _, t := range m.GetTasks() {
+					if t.GetTitle() == task.GetTitle() {
+						return &pb.AddTaskResponse{Task: t}, status.Errorf(codes.AlreadyExists, "Task exists")
+					}
+				}
 				m.Tasks = append(m.Tasks, task)
 				return &pb.AddTaskResponse{Task: task}, s.save(ctx)
 			}

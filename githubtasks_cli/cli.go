@@ -124,6 +124,9 @@ func main() {
 				task := scanner.Text()
 				fmt.Printf("Adding %v\n", task)
 				_, err = client.AddTask(ctx, &pb.AddTaskRequest{MilestoneName: elems[0], MilestoneNumber: int32(number), Title: task, Body: "Auto added", GithubProject: elems[2]})
+				if err != nil {
+					fmt.Printf("BAD ADD: %v\n", err)
+				}
 			}
 
 		}

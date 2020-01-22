@@ -146,6 +146,18 @@ func (s *Server) load(ctx context.Context) error {
 	return nil
 }
 
+func (s *Server) runLocking(ctx context.Context) (time.Time, error) {
+	t1, err := s.processProjects(ctx)
+	if err != nil {
+		return t1, err
+	}
+	t2, err := s.updateProjects(ctx)
+	if t1.Before(t2) {
+		return t1, err
+	}
+	return t2, err
+}
+
 func main() {
 	var quiet = flag.Bool("quiet", false, "Show all output")
 	flag.Parse()
@@ -164,8 +176,7 @@ func main() {
 	}
 
 	server.RegisterRepeatingTask(server.validateIntegrity, "validate_integrity", time.Minute*5)
-	server.RegisterLockingTask(server.processProjects, "process_projects")
-	server.RegisterLockingTask(server.updateProjects, "update_projects")
+	server.RegisterLockingTask(server.runLocking, "run_locking")
 
 	fmt.Printf("%v", server.Serve())
 }
