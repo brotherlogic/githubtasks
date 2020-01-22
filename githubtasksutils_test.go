@@ -227,6 +227,9 @@ func TestAddTasks(t *testing.T) {
 	for _, m := range resp.GetMilestones() {
 		for _, tsk := range m.GetTasks() {
 			if tsk.GetNumber() > 0 {
+				if len(chosenTask) > 0 {
+					t.Errorf("Multiple tasks chosen")
+				}
 				chosenTask = tsk.GetTitle()
 			}
 		}
