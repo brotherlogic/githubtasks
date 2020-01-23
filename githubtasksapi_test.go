@@ -20,6 +20,17 @@ func TestDeleteTask(t *testing.T) {
 	}
 }
 
+func TestBadAddTask(t *testing.T) {
+	s := InitTestServer()
+	s.GoServer.KSclient.Fail = true
+
+	_, err := s.AddTask(context.Background(), &pb.AddTaskRequest{})
+
+	if err == nil {
+		t.Errorf("Failing add did not fail")
+	}
+}
+
 func TestAddProject(t *testing.T) {
 	s := InitTestServer()
 
