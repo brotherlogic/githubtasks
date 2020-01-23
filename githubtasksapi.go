@@ -22,6 +22,11 @@ func (s *Server) AddProject(ctx context.Context, req *pb.AddProjectRequest) (*pb
 
 // AddTask to the system
 func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTaskResponse, error) {
+	err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	task := &pb.Task{Title: req.GetTitle(), Body: req.GetBody()}
 
 	for _, p := range s.config.GetProjects() {
