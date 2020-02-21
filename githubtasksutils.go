@@ -34,7 +34,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 							}
 						}
 
-						if !activeTask {
+						if !activeTask && len(milestone.GetTasks()) > 0 {
 							s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v of %v for %v has no active tasks", project.GetName(), milestone.GetName(), milestone.GetGithubProject()), false)
 						}
 					}
