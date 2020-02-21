@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	conn, err := grpc.Dial("discovery:///githubtasks", grpc.WithInsecure(), grpc.WithBalancerName("my_pick_first"))
+	conn, err := grpc.Dial("discovery:///githubtasks", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Unable to dial: %v", err)
 	}
