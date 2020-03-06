@@ -22,6 +22,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 		for _, project := range s.config.GetProjects() {
 			activeMilestone := false
 			noComplete := true
+			mstone := &pb.Milestone{}
 			for _, milestone := range project.GetMilestones() {
 				if milestone.GetState() == pb.Milestone_ACTIVE {
 					activeMilestone = true
@@ -41,12 +42,13 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 					}
 				} else if milestone.GetState() != pb.Milestone_COMPLETE {
 					noComplete = false
+					mstone = milestone
 				}
 
 			}
 
 			if (!activeMilestone && len(project.GetMilestones()) > 0) || !noComplete {
-				s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v has no active milestones", project.GetName()), false)
+				s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v has no active milestones (%v is not complete)", project.GetName(), mstone), false)
 			}
 		}
 
