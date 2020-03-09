@@ -47,7 +47,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 
 			}
 
-			if (!activeMilestone && len(project.GetMilestones()) > 0) || !noComplete {
+			if (!activeMilestone && len(project.GetMilestones()) > 0) && !noComplete {
 				s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v has no active milestones (%v is not complete)", project.GetName(), mstone), false)
 			}
 		}
