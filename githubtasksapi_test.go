@@ -95,4 +95,20 @@ func TestAddProject(t *testing.T) {
 			}
 		}
 	}
+
+	dresp, err := s.DeleteProject(context.Background(), &pb.DeleteProjectRequest{Name: "test projectsssss"})
+	if err != nil {
+		t.Errorf("Bad project delete: %v", err)
+	}
+	if dresp.GetDeleted() != int32(0) {
+		t.Errorf("Hmm - no projects deleted")
+	}
+
+	dresp, err = s.DeleteProject(context.Background(), &pb.DeleteProjectRequest{Name: "test project"})
+	if err != nil {
+		t.Errorf("Bad project delete: %v", err)
+	}
+	if dresp.GetDeleted() != int32(1) {
+		t.Errorf("Hmm - no projects deleted")
+	}
 }
