@@ -94,6 +94,14 @@ message DeleteTaskResponse {
   Task task = 1;
 }
 
+message DeleteProjectRequest {
+  string name = 1;
+}
+
+message DeleteProjectResponse {
+  int32 deleted = 1;
+}
+
 service TasksService {
   rpc AddProject(AddProjectRequest) returns (AddProjectResponse) {};
   rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {};
@@ -101,4 +109,5 @@ service TasksService {
   rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {};
   rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse) {};
   rpc GetMilestones(GetMilestonesRequest) returns (GetMilestonesResponse) {};
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {};
 }

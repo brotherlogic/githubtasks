@@ -76,6 +76,13 @@ func main() {
 			fmt.Printf("Task not deleted\n")
 		}
 
+	case "delete_project":
+		resp, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{Name: os.Args[2]})
+		if err != nil {
+			log.Fatalf("Error getting milestones: %v", err)
+		}
+		fmt.Printf("Project Deleted: %v\n", resp)
+
 	case "project":
 		projectFlags := flag.NewFlagSet("Project", flag.ExitOnError)
 		var file = projectFlags.String("file", "", "Project file to add")
