@@ -23,11 +23,11 @@ type github interface {
 }
 
 type prodGithub struct {
-	dial func(server string) (*grpc.ClientConn, error)
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
 func (p *prodGithub) createMilestone(ctx context.Context, m *pb.Milestone) (int32, error) {
-	conn, err := p.dial("githubcard")
+	conn, err := p.dial(ctx, "githubcard")
 	if err != nil {
 		return -1, err
 	}
@@ -42,7 +42,7 @@ func (p *prodGithub) createMilestone(ctx context.Context, m *pb.Milestone) (int3
 }
 
 func (p *prodGithub) getIssue(ctx context.Context, service string, number int32) (*ghcpb.Issue, error) {
-	conn, err := p.dial("githubcard")
+	conn, err := p.dial(ctx, "githubcard")
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (p *prodGithub) getIssue(ctx context.Context, service string, number int32)
 }
 
 func (p *prodGithub) createTask(ctx context.Context, t *pb.Task, service string, mn int32) (int32, error) {
-	conn, err := p.dial("githubcard")
+	conn, err := p.dial(ctx, "githubcard")
 	if err != nil {
 		return -1, err
 	}
@@ -89,7 +89,7 @@ func Init() *Server {
 		GoServer: &goserver.GoServer{},
 		config:   &pb.Config{},
 	}
-	s.github = &prodGithub{dial: s.DialMaster}
+	s.github = &prodGithub{dial: s.FDialServer}
 	return s
 }
 
