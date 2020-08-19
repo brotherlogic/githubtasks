@@ -10,29 +10,24 @@ import (
 	"strings"
 
 	"github.com/brotherlogic/goserver/utils"
-	"google.golang.org/grpc"
 
 	pb "github.com/brotherlogic/githubtasks/proto"
 
 	//Needed to pull in gzip encoding init
 	_ "google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/resolver"
 )
 
-func init() {
-	resolver.Register(&utils.DiscoveryClientResolverBuilder{})
-}
-
 func main() {
-	conn, err := grpc.Dial("discovery:///githubtasks", grpc.WithInsecure())
+	ctx, cancel := utils.BuildContext("githubtasks-cli", "githubtasks")
+	defer cancel()
+
+	conn, err := utils.LFDialServer(ctx, "githubtasks")
 	if err != nil {
 		log.Fatalf("Unable to dial: %v", err)
 	}
 	defer conn.Close()
 
 	client := pb.NewTasksServiceClient(conn)
-	ctx, cancel := utils.BuildContext("githubtasks-cli", "githubtasks")
-	defer cancel()
 
 	switch os.Args[1] {
 	case "milestones":

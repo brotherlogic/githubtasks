@@ -124,13 +124,13 @@ func (s *Server) save(ctx context.Context) error {
 	return s.KSclient.Save(ctx, KEY, s.config)
 }
 
-func (s *Server) load(ctx context.Context) error {
-	data, _, err := s.KSclient.Read(ctx, KEY, s.config)
+func (s *Server) load(ctx context.Context) (*pb.Config, error) {
+	data, _, err := s.KSclient.Read(ctx, KEY, &pb.Config{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	s.config = data.(*pb.Config)
+	config := data.(*pb.Config)
 
 	// Ensure all tasks have a uid
 	for _, p := range s.config.GetProjects() {
@@ -143,7 +143,7 @@ func (s *Server) load(ctx context.Context) error {
 		}
 	}
 
-	return nil
+	return config, nil
 }
 
 func (s *Server) runLocking(ctx context.Context) (time.Time, error) {
