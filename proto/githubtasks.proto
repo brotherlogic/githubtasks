@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package githubtasks;
 
+option go_package = "github.com/brotherlogic/githubtasks/proto";
+
 message config {
   repeated Project projects = 1;
   int64 last_update = 2;
