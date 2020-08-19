@@ -16,7 +16,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 
 	if err == nil {
 		if len(s.config.GetProjects()) == 0 {
-			s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("There are no projects listed"), false)
+			s.RaiseIssue("Task Issue", fmt.Sprintf("There are no projects listed"))
 		}
 
 		for _, project := range s.config.GetProjects() {
@@ -27,7 +27,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 				if milestone.GetState() == pb.Milestone_ACTIVE {
 					activeMilestone = true
 					if len(milestone.GetTasks()) == 0 {
-						s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v of %v has no tasks", project.GetName(), milestone.GetName()), false)
+						s.RaiseIssue("Task Issue", fmt.Sprintf("%v of %v has no tasks", project.GetName(), milestone.GetName()))
 					} else {
 						activeTask := false
 						for _, task := range milestone.GetTasks() {
@@ -37,7 +37,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 						}
 
 						if !activeTask && len(milestone.GetTasks()) > 0 {
-							s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v of %v for %v has no active tasks", project.GetName(), milestone.GetName(), milestone.GetGithubProject()), false)
+							s.RaiseIssue("Task Issue", fmt.Sprintf("%v of %v for %v has no active tasks", project.GetName(), milestone.GetName(), milestone.GetGithubProject()))
 						}
 					}
 				} else if milestone.GetState() != pb.Milestone_COMPLETE {
@@ -48,7 +48,7 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 			}
 
 			if (!activeMilestone && len(project.GetMilestones()) > 0) && !noComplete {
-				s.RaiseIssue(ctx, "Task Issue", fmt.Sprintf("%v has no active milestones (%v is not complete)", project.GetName(), mstone), false)
+				s.RaiseIssue("Task Issue", fmt.Sprintf("%v has no active milestones (%v is not complete)", project.GetName(), mstone))
 			}
 		}
 
