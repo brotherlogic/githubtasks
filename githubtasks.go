@@ -175,8 +175,5 @@ func main() {
 		return
 	}
 
-	server.RegisterRepeatingTask(server.validateIntegrity, "validate_integrity", time.Minute*5)
-	server.RegisterLockingTask(server.runLocking, "run_locking")
-
 	fmt.Printf("%v", server.Serve())
 }
