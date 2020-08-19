@@ -12,9 +12,9 @@ import (
 
 // AddProject to the system
 func (s *Server) AddProject(ctx context.Context, req *pb.AddProjectRequest) (*pb.AddProjectResponse, error) {
-	err := s.load(ctx)
+	config, err := s.load(ctx)
 	if err == nil {
-		s.config.Projects = append(s.config.Projects, req.GetAdd())
+		config.Projects = append(config.Projects, req.GetAdd())
 		err = s.save(ctx)
 	}
 	return &pb.AddProjectResponse{}, err
@@ -22,14 +22,14 @@ func (s *Server) AddProject(ctx context.Context, req *pb.AddProjectRequest) (*pb
 
 // AddTask to the system
 func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTaskResponse, error) {
-	err := s.load(ctx)
+	config, err := s.load(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	task := &pb.Task{Title: req.GetTitle(), Body: req.GetBody()}
 
-	for _, p := range s.config.GetProjects() {
+	for _, p := range config.GetProjects() {
 		for _, m := range p.GetMilestones() {
 			if m.GetName() == req.GetMilestoneName() && m.GetNumber() == req.GetMilestoneNumber() && m.GetGithubProject() == req.GetGithubProject() {
 				for _, t := range m.GetTasks() {
@@ -48,15 +48,19 @@ func (s *Server) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTa
 
 //DeleteProject removes a project
 func (s *Server) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*pb.DeleteProjectResponse, error) {
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
 	nprojs := []*pb.Project{}
 	ol := len(s.config.GetProjects())
-	for _, p := range s.config.GetProjects() {
+	for _, p := range config.GetProjects() {
 		if p.GetName() != req.GetName() {
 			nprojs = append(nprojs, p)
 		}
 	}
-	s.config.Projects = nprojs
-	return &pb.DeleteProjectResponse{Deleted: int32(ol - len(s.config.GetProjects()))}, s.save(ctx)
+	config.Projects = nprojs
+	return &pb.DeleteProjectResponse{Deleted: int32(ol - len(config.GetProjects()))}, s.save(ctx)
 }
 
 // DeleteTask to the system
@@ -88,8 +92,13 @@ func (s *Server) GetProjects(ctx context.Context, req *pb.GetProjectsRequest) (*
 
 // GetMilestones for the system
 func (s *Server) GetMilestones(ctx context.Context, req *pb.GetMilestonesRequest) (*pb.GetMilestonesResponse, error) {
+	config, err := s.load(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	resp := &pb.GetMilestonesResponse{Milestones: []*pb.Milestone{}}
-	for _, p := range s.config.GetProjects() {
+	for _, p := range config.GetProjects() {
 		for _, m := range p.GetMilestones() {
 			if len(req.GetGithubProject()) == 0 || m.GetGithubProject() == req.GetGithubProject() {
 				resp.Milestones = append(resp.Milestones, m)

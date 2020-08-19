@@ -12,14 +12,17 @@ import (
 )
 
 func (s *Server) validateIntegrity(ctx context.Context) error {
-	err := s.load(ctx)
+	config, err := s.load(ctx)
+	if err != nil {
+		return err
+	}
 
 	if err == nil {
-		if len(s.config.GetProjects()) == 0 {
+		if len(config.GetProjects()) == 0 {
 			s.RaiseIssue("Task Issue", fmt.Sprintf("There are no projects listed"))
 		}
 
-		for _, project := range s.config.GetProjects() {
+		for _, project := range config.GetProjects() {
 			activeMilestone := false
 			noComplete := true
 			mstone := &pb.Milestone{}
@@ -58,10 +61,10 @@ func (s *Server) validateIntegrity(ctx context.Context) error {
 }
 
 func (s *Server) updateProjects(ctx context.Context) (time.Time, error) {
-	err := s.load(ctx)
+	config, err := s.load(ctx)
 
 	if err == nil {
-		for _, project := range s.config.GetProjects() {
+		for _, project := range config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
 				if milestone.GetState() == pb.Milestone_ACTIVE {
 					for _, task := range milestone.GetTasks() {
@@ -86,10 +89,10 @@ func (s *Server) updateProjects(ctx context.Context) (time.Time, error) {
 }
 
 func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
-	err := s.load(ctx)
+	config, err := s.load(ctx)
 
 	if err == nil {
-		for _, project := range s.config.GetProjects() {
+		for _, project := range config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
 				s.Log(fmt.Sprintf("Process: %v -> %v", milestone.GetName(), milestone.GetState()))
 				time.Sleep(time.Second * 5)
