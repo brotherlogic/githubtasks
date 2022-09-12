@@ -94,7 +94,7 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 	if err == nil {
 		for _, project := range config.GetProjects() {
 			for _, milestone := range project.GetMilestones() {
-				s.Log(fmt.Sprintf("Process: %v -> %v", milestone.GetName(), milestone.GetState()))
+				s.CtxLog(ctx, fmt.Sprintf("Process: %v -> %v", milestone.GetName(), milestone.GetState()))
 				time.Sleep(time.Second * 5)
 				if milestone.GetState() == pb.Milestone_ACTIVE {
 					countActive := 0
@@ -113,7 +113,7 @@ func (s *Server) processProjects(ctx context.Context) (time.Time, error) {
 						if task.GetState() == pb.Task_CREATED {
 							countActive++
 							num, err := s.github.createTask(ctx, task, milestone.GetGithubProject(), milestone.GetNumber())
-							s.Log(fmt.Sprintf("Added task %v -> %v,%v", task.GetTitle(), num, err))
+							s.CtxLog(ctx, fmt.Sprintf("Added task %v -> %v,%v", task.GetTitle(), num, err))
 							if err != nil {
 								return time.Now().Add(time.Minute * 5), err
 							}
