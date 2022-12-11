@@ -3,12 +3,12 @@ module github.com/brotherlogic/githubtasks
 go 1.16
 
 require (
-	github.com/brotherlogic/githubcard v0.0.0-20221203201620-54ec2faa3df3
+	github.com/brotherlogic/githubcard v0.0.0-20221211022121-9a75db32e04b
 	github.com/brotherlogic/goserver v0.0.0-20221202193151-b0b39691c212
-	github.com/brotherlogic/keystore v0.0.0-20221203184922-2e64260b58ab
-	github.com/brotherlogic/lock v0.0.0-20221203202511-04ba5b92ba06 // indirect
+	github.com/brotherlogic/keystore v0.0.0-20221210190215-af3698c6a2c9
+	github.com/brotherlogic/logging v0.0.0-20221211023411-3e56b8c66cc1 // indirect
 	github.com/golang/protobuf v1.5.2
-	golang.org/x/net v0.2.0
+	golang.org/x/net v0.4.0
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
