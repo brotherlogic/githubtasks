@@ -3,7 +3,7 @@ module github.com/brotherlogic/githubtasks
 go 1.23.2
 
 require (
-	github.com/brotherlogic/githubcard v0.0.0-20250602195815-c51e09051d2a
+	github.com/brotherlogic/githubcard v0.0.0-20250602201355-df71bcc77760
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/golang/protobuf v1.5.4
@@ -14,7 +14,7 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20250531011332-446ed2bcdd48 // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20250602201412-6457418ba6bb // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250602200734-ba937b7b11ac // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250510023052-d0207340fd9e // indirect
 	github.com/brotherlogic/dstore v0.0.0-20250602200129-4cc9098d7f58 // indirect
