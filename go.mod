@@ -3,7 +3,7 @@ module github.com/brotherlogic/githubtasks
 go 1.24.4
 
 require (
-	github.com/brotherlogic/githubcard v0.0.0-20250705000031-c92781b901a7
+	github.com/brotherlogic/githubcard v0.0.0-20250705001457-90deb6880d6b
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/golang/protobuf v1.5.4
